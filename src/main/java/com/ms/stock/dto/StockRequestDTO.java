@@ -9,11 +9,6 @@ public class StockRequestDTO {
 	private Long productId;
 
 	private BigDecimal availableQuantity;
-	private BigDecimal reservedQuantity;
-	private BigDecimal minimumQuantity;
-	private BigDecimal maximumQuantity;
-
-	private boolean active;
 
 	public Long getId() {
 
@@ -43,46 +38,6 @@ public class StockRequestDTO {
 	public void setAvailableQuantity(BigDecimal availableQuantity) {
 
 		this.availableQuantity = availableQuantity;
-	}
-
-	public BigDecimal getReservedQuantity() {
-
-		return reservedQuantity;
-	}
-
-	public void setReservedQuantity(BigDecimal reservedQuantity) {
-
-		this.reservedQuantity = reservedQuantity;
-	}
-
-	public BigDecimal getMinimumQuantity() {
-
-		return minimumQuantity;
-	}
-
-	public void setMinimumQuantity(BigDecimal minimumQuantity) {
-
-		this.minimumQuantity = minimumQuantity;
-	}
-
-	public BigDecimal getMaximumQuantity() {
-
-		return maximumQuantity;
-	}
-
-	public void setMaximumQuantity(BigDecimal maximumQuantity) {
-
-		this.maximumQuantity = maximumQuantity;
-	}
-
-	public boolean isActive() {
-
-		return active;
-	}
-
-	public void setActive(boolean active) {
-
-		this.active = active;
 	}
 
 }

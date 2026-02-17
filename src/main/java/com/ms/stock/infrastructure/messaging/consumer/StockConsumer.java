@@ -14,7 +14,7 @@ public class StockConsumer {
 	@Autowired
 	private StockService stockService;
 
-	@RabbitListener(queues = "${broker.queue.stock.name}")
+	@RabbitListener(queues = "${broker.queue.stock}")
 	public void listenStockQueue(@Payload OrderCreatedEvent orderCreatedEvent) {
 
 		this.stockService.reserveStock(orderCreatedEvent);

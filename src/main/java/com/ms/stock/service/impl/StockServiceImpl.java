@@ -38,9 +38,6 @@ public class StockServiceImpl implements StockService {
 
 		Stock stock = this.stockMapper.toEntity(stockRequest);
 
-		stock.setCreatedAt(Calendar.getInstance());
-		stock.setUpdatedAt(Calendar.getInstance());
-
 		try {
 
 			this.stockRepository.save(stock);
@@ -50,8 +47,7 @@ public class StockServiceImpl implements StockService {
 		}
 
 		StockResponseDTO stockResponse = new StockResponseDTO(stock.getProductId(), stock.getAvailableQuantity(),
-				stock.getReservedQuantity(), stock.getMinimumQuantity(), stock.getMaximumQuantity(), stock.isActive(),
-				DESCRIPTION_STOCK_CREATED, stock.getCreatedAt());
+				DESCRIPTION_STOCK_CREATED, Calendar.getInstance());
 
 		return stockResponse;
 	}
@@ -59,16 +55,8 @@ public class StockServiceImpl implements StockService {
 	@Override
 	public Stock findByProductId(Long productId) {
 
-		Stock stock = null;
-		try {
-
-			stock = this.stockRepository.findByProductId(productId);
-
-		} catch (Exception e) {
-			throw new RuntimeException("Estoque não encontrado para o produto informado.");
-		}
-
-		return stock;
+		return this.stockRepository.findByProductId(productId)
+				.orElseThrow(() -> new RuntimeException("Estoque não encontrado para o produto informado."));
 	}
 
 	@Override
