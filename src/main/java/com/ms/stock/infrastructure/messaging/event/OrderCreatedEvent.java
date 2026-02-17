@@ -1,13 +1,12 @@
 package com.ms.stock.infrastructure.messaging.event;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 public class OrderCreatedEvent {
 
 	private Long orderId;
-	private Long productId;
 
-	private BigDecimal quantity;
+	private List<OrderItemCreatedEvent> items;
 
 	public Long getOrderId() {
 
@@ -19,27 +18,14 @@ public class OrderCreatedEvent {
 		this.orderId = orderId;
 	}
 
-	public Long getProductId() {
+	public List<OrderItemCreatedEvent> getItems() {
 
-		return productId;
+		return items;
 	}
 
-	public void setProductId(Long productId) {
+	public void setItems(List<OrderItemCreatedEvent> items) {
 
-		this.productId = productId;
-	}
-
-	public BigDecimal getQuantity() {
-
-		if (quantity == null)
-			return BigDecimal.ZERO;
-
-		return quantity;
-	}
-
-	public void setQuantity(BigDecimal quantity) {
-
-		this.quantity = quantity;
+		this.items = items;
 	}
 
 }

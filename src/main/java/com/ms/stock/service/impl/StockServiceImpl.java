@@ -1,5 +1,6 @@
 package com.ms.stock.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import com.ms.stock.domain.repository.StockRepository;
 import com.ms.stock.dto.StockRequestDTO;
 import com.ms.stock.dto.StockResponseDTO;
 import com.ms.stock.infrastructure.messaging.event.OrderCreatedEvent;
+import com.ms.stock.infrastructure.messaging.event.OrderItemCreatedEvent;
 import com.ms.stock.mapper.StockMapper;
 import com.ms.stock.service.StockMovementService;
 import com.ms.stock.service.StockService;
@@ -72,12 +74,16 @@ public class StockServiceImpl implements StockService {
 	@Override
 	public void reserveStock(OrderCreatedEvent orderCreatedEvent) {
 
-		Stock stock = this.findByProductId(orderCreatedEvent.getProductId());
+		for (OrderItemCreatedEvent item : orderCreatedEvent.getItems()) {
 
-		stock.validateReserve(orderCreatedEvent.getQuantity());
-		stock.updateStock(orderCreatedEvent.getQuantity());
+			Stock stock = this.findByProductId(item.getProductId());
 
-		this.stockMovementService.registerMovement(orderCreatedEvent);
+			BigDecimal quantity = item.getQuantity();
+			stock.validateReserve(quantity);
+			stock.updateStock(quantity);
+
+			this.stockMovementService.registerMovement(orderCreatedEvent);
+		}
 	}
 
 }
