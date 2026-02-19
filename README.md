@@ -87,6 +87,46 @@ Ao receber o evento:
 - Atualiza a quantidade disponível
 - Cria uma movimentação de estoque
 
+## Eventos Publicados
+
+Estoque Reservado
+---
+Exchange:
+- stock.exchange
+
+Routing Key:
+- stock.reserved
+
+Payload:
+```
+{
+  "orderId": 123
+}
+```
+
+Falha na Reserva
+---
+Exchange:
+- stock.exchange
+
+Routing Key:
+- stock.failed
+
+Payload:
+```
+{
+  "orderId": 123
+}
+```
+
+Estratégia de Retry e Resiliência
+---
+O serviço implementa retry exponencial para falhas técnicas:
+1s, 2s, 4s, 8s, 10s
+
+- Após 5 tentativas, a mensagem é encaminhada para Dead Letter Queue (DLQ)
+- Erros de regra de negócio não geram retry. Nestes casos, o serviço publica diretamente o evento stock.failed
+
 ### Configuração RabbitMQ
 #### Propriedades:
 - broker.exchange.order=order.exchange
