@@ -11,8 +11,8 @@ import com.ms.stock.domain.model.Stock;
 import com.ms.stock.domain.repository.StockRepository;
 import com.ms.stock.dto.StockRequestDTO;
 import com.ms.stock.dto.StockResponseDTO;
+import com.ms.stock.infrastructure.messaging.producer.StockProducer;
 import com.ms.stock.mapper.StockMapper;
-import com.ms.stock.producer.StockProducer;
 import com.ms.stock.service.StockMovementService;
 import com.ms.stock.service.StockService;
 

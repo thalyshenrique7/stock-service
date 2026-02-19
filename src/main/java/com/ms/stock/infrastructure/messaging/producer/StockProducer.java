@@ -1,4 +1,4 @@
-package com.ms.stock.producer;
+package com.ms.stock.infrastructure.messaging.producer;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
