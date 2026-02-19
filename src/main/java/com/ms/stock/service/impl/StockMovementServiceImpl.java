@@ -3,11 +3,11 @@ package com.ms.stock.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ms.common.infrastructure.messaging.event.OrderCreatedEvent;
+import com.ms.common.infrastructure.messaging.event.OrderItemCreatedEvent;
 import com.ms.stock.domain.model.StockMovement;
 import com.ms.stock.domain.repository.StockMovementRepository;
 import com.ms.stock.enums.MovementStatus;
-import com.ms.stock.infrastructure.messaging.event.OrderCreatedEvent;
-import com.ms.stock.infrastructure.messaging.event.OrderItemCreatedEvent;
 import com.ms.stock.service.StockMovementService;
 
 @Component

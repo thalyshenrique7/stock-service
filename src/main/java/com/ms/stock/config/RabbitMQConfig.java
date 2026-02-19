@@ -4,6 +4,9 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +25,9 @@ public class RabbitMQConfig {
 
 	@Value("${broker.routing.order-created}")
 	private String routingKey;
+
+	@Value("${broker.exchange.stock}")
+	private String stockExchange;
 
 	@Bean
 	public Queue queue() {
@@ -46,6 +52,27 @@ public class RabbitMQConfig {
 	public Binding stockBinding(Queue stockQueue, TopicExchange orderExchange) {
 
 		return BindingBuilder.bind(stockQueue).to(orderExchange).with(routingKey);
+	}
+
+	@Bean(name = "stockListenerContainerFactory")
+	public SimpleRabbitListenerContainerFactory stockListenerContainerFactory(ConnectionFactory connectionFactory,
+			Jackson2JsonMessageConverter messageConverter) {
+
+		SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+
+		factory.setConnectionFactory(connectionFactory);
+		factory.setMessageConverter(messageConverter);
+
+		factory.setAdviceChain(
+				RetryInterceptorBuilder.stateless().maxAttempts(5).backOffOptions(1000, 2.0, 10000).build());
+
+		return factory;
+	}
+
+	@Bean
+	public TopicExchange stockExchange() {
+
+		return new TopicExchange(stockExchange, true, false);
 	}
 
 }

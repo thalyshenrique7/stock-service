@@ -1,6 +1,6 @@
 package com.ms.stock.service;
 
-import com.ms.stock.infrastructure.messaging.event.OrderCreatedEvent;
+import com.ms.common.infrastructure.messaging.event.OrderCreatedEvent;
 
 public interface StockMovementService {
 

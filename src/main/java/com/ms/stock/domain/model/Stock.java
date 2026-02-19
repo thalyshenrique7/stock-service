@@ -69,7 +69,7 @@ public class Stock implements Serializable {
 		this.availableQuantity = availableQuantity;
 	}
 
-	public void validateReserve(BigDecimal quantity) {
+	public void validateAndUpdateStock(BigDecimal quantity) {
 
 		if (BigDecimalUtils.isLessOrEqualThanZero(quantity))
 			throw new RuntimeException("A quantidade para reserva deve ser maior que zero.");
@@ -77,6 +77,7 @@ public class Stock implements Serializable {
 		if (BigDecimalUtils.isGreaterThan(quantity, getAvailableQuantity()))
 			throw new RuntimeException("Estoque insuficiente para realizar a reserva.");
 
+		this.updateStock(quantity);
 	}
 
 	public void updateStock(BigDecimal quantity) {

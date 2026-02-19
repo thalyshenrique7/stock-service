@@ -1,18 +1,18 @@
 package com.ms.stock.service.impl;
 
-import java.math.BigDecimal;
 import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ms.common.infrastructure.messaging.event.OrderCreatedEvent;
+import com.ms.common.infrastructure.messaging.event.OrderItemCreatedEvent;
 import com.ms.stock.domain.model.Stock;
 import com.ms.stock.domain.repository.StockRepository;
 import com.ms.stock.dto.StockRequestDTO;
 import com.ms.stock.dto.StockResponseDTO;
-import com.ms.stock.infrastructure.messaging.event.OrderCreatedEvent;
-import com.ms.stock.infrastructure.messaging.event.OrderItemCreatedEvent;
 import com.ms.stock.mapper.StockMapper;
+import com.ms.stock.producer.StockProducer;
 import com.ms.stock.service.StockMovementService;
 import com.ms.stock.service.StockService;
 
@@ -32,6 +32,9 @@ public class StockServiceImpl implements StockService {
 
 	@Autowired
 	private StockMovementService stockMovementService;
+
+	@Autowired
+	private StockProducer stockProducer;
 
 	@Override
 	public StockResponseDTO save(StockRequestDTO stockRequest) {
@@ -53,25 +56,24 @@ public class StockServiceImpl implements StockService {
 	}
 
 	@Override
-	public Stock findByProductId(Long productId) {
+	public void updateStock(OrderCreatedEvent orderCreatedEvent) {
 
-		return this.stockRepository.findByProductId(productId)
-				.orElseThrow(() -> new RuntimeException("Estoque não encontrado para o produto informado."));
-	}
-
-	@Override
-	public void reserveStock(OrderCreatedEvent orderCreatedEvent) {
+		Long orderId = orderCreatedEvent.getOrderId();
 
 		for (OrderItemCreatedEvent item : orderCreatedEvent.getItems()) {
 
-			Stock stock = this.findByProductId(item.getProductId());
+			Stock stock = this.stockRepository.findByProductId(item.getProductId()).orElseThrow(null);
 
-			BigDecimal quantity = item.getQuantity();
-			stock.validateReserve(quantity);
-			stock.updateStock(quantity);
+			if (stock == null)
+				stockProducer.publishStockFailed(orderId);
+
+			stock.validateAndUpdateStock(item.getQuantity());
+			stockRepository.save(stock);
 
 			this.stockMovementService.registerMovement(orderCreatedEvent);
 		}
+
+		stockProducer.publishStockReserved(orderId);
 	}
 
 }
